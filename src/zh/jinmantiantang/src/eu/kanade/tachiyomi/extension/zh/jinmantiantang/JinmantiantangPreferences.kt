@@ -113,43 +113,18 @@ class UpdateUrlInterceptor(private val preferences: SharedPreferences) : Interce
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
+        // 1. 如果请求不是发往我们定义的 baseUrl，就直接放行
         if (!request.url.toString().startsWith(baseUrl)) return chain.proceed(request)
 
-        val failedResponse = try {
+        // 2. 直接执行请求。不再尝试更新 URL，不再抛出那个提示更新的 IOException
+        return try {
             val response = chain.proceed(request)
-            if (response.isSuccessful) return response
-            response.close()
-            Result.success(response)
+            // 如果请求成功直接返回，如果失败则在 catch 中处理
+            response
         } catch (e: Throwable) {
+            // 保留原有的 Cloudflare 异常判断
             if (chain.call().isCanceled() || e.message?.contains("Cloudflare") == true) throw e
-            Result.failure(e)
+            throw e
         }
-
-        if (isUpdated || updateUrl(chain)) {
-            throw IOException("镜像网址已自动更新，请在插件设置中选择合适的镜像网址并重启应用（如果反复提示，可能是服务器故障）")
-        }
-        return failedResponse.getOrThrow()
-    }
-
-    @Synchronized
-    private fun updateUrl(chain: Interceptor.Chain): Boolean {
-        if (isUpdated) return true
-        val response = try {
-            chain.proceed(GET("https://stevenyomi.github.io/source-domains/jmcomic.txt"))
-        } catch (_: Throwable) {
-            return false
-        }
-        if (!response.isSuccessful) {
-            response.close()
-            return false
-        }
-        val newList = response.body.string()
-        if (newList != preferences.getString(URL_LIST_PREF, "")!!) {
-            preferences.edit()
-                .setUrlList(newList, preferences.mirrorIndex)
-                .apply()
-        }
-        isUpdated = true
-        return true
     }
 }
