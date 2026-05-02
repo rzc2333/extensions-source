@@ -81,6 +81,8 @@ jobs:
           # 删掉原本复杂的 join 逻辑，直接写死你的插件路径
           MODULES: ":src:zh:jinmantiantang:assembleDebug" 
         run: |
+          # 就在这里加，先修复格式，再执行编译
+          ./gradlew spotlessApply
           ./gradlew $MODULES
 
       - name: Upload APKs (${{ matrix.chunk.number }})
