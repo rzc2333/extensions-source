@@ -76,20 +76,14 @@ private const val USE_MIRROR_URL_PREF = "useMirrorWebsitePreference"
 
 private val SITE_ENTRIES_ARRAY_DESCRIPTION get() = arrayOf(
     "主站1",
-    "主站2",
-    "东南亚线路1",
-    "东南亚线路2",
 )
 
 // Please also update AndroidManifest
 private val SITE_ENTRIES_ARRAY get() = arrayOf(
     "18comic.vip",
-    "18comic.ink",
-    "jmcomic-zzz.one",
-    "jmcomic-zzz.org",
 )
 
-private const val DEFAULT_LIST = "18comic-ive.club,18comic-aspa.org,18comic-wantgo.cc"
+private const val DEFAULT_LIST = "18comic1.mom,18comic1.sbs,18comic.sbs,18comic2.sbs,18comic2.icu,18comic168.cc,18comic168.top,mh99.one,18comic.cfd"
 private const val DEFAULT_LIST_PREF = "defaultBaseUrlList"
 private const val URL_LIST_PREF = "baseUrlList"
 
